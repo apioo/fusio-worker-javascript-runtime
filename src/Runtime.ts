@@ -30,7 +30,7 @@ export class Runtime {
         const result = await callback(payload.request, payload.context, connector, responseBuilder, dispatcher, logger);
 
         let response: ResponseHTTP;
-        if ('statusCode' in result) {
+        if (typeof result === 'object' && 'statusCode' in result) {
             response = result;
         } else {
             response = {
