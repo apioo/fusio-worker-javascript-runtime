@@ -5,6 +5,7 @@ import {Connector} from "./Connector";
 import {Dispatcher} from "./Dispatcher";
 import {Logger} from "./Logger";
 import {ResponseBuilder} from "./ResponseBuilder";
+import {ResponseHTTP} from "./generated/ResponseHTTP";
 
 export class Runtime {
 
@@ -26,10 +27,12 @@ export class Runtime {
             throw new Error('Provided action does not return a function');
         }
 
-        await callback(payload.request, payload.context, connector, responseBuilder, dispatcher, logger);
+        const result = await callback(payload.request, payload.context, connector, responseBuilder, dispatcher, logger);
 
-        let response = responseBuilder.getResponse();
-        if (!response) {
+        let response: ResponseHTTP;
+        if ('statusCode' in result) {
+            response = result;
+        } else {
             response = {
                 statusCode: 204
             };
